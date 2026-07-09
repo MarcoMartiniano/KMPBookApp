@@ -16,11 +16,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,7 +57,7 @@ fun BookListScreenRoot(
     BookListScreen(
         state = state,
         onAction = { action ->
-            when(action) {
+            when (action) {
                 is BookListAction.OnBookClick -> onBookClick(action.book)
                 else -> Unit
             }
@@ -125,7 +124,7 @@ private fun BookListScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TabRow(
+                SecondaryTabRow(
                     selectedTabIndex = state.selectedTabIndex,
                     modifier = Modifier
                         .padding(vertical = 12.dp)
@@ -133,13 +132,13 @@ private fun BookListScreen(
                         .fillMaxWidth(),
                     containerColor = DesertWhite,
                     contentColor = SandYellow,
-                    indicator = { tabPositions ->
+                    indicator = {
                         TabRowDefaults.SecondaryIndicator(
-                            color = SandYellow,
-                            modifier = Modifier
-                                .tabIndicatorOffset(
-                                    tabPositions[state.selectedTabIndex]
-                                )
+                            modifier = Modifier.tabIndicatorOffset(
+                                selectedTabIndex = state.selectedTabIndex,
+                                matchContentSize = false
+                            ),
+                            color = SandYellow
                         )
                     }
                 ) {
@@ -148,14 +147,12 @@ private fun BookListScreen(
                         onClick = {
                             onAction(BookListAction.OnTabSelected(0))
                         },
-                        modifier = Modifier.weight(1f),
                         selectedContentColor = SandYellow,
                         unselectedContentColor = Color.Black.copy(alpha = 0.5f)
                     ) {
                         Text(
                             text = stringResource(Res.string.search_results),
-                            modifier = Modifier
-                                .padding(vertical = 12.dp)
+                            modifier = Modifier.padding(vertical = 12.dp)
                         )
                     }
 
@@ -164,14 +161,12 @@ private fun BookListScreen(
                         onClick = {
                             onAction(BookListAction.OnTabSelected(1))
                         },
-                        modifier = Modifier.weight(1f),
                         selectedContentColor = SandYellow,
                         unselectedContentColor = Color.Black.copy(alpha = 0.5f)
                     ) {
                         Text(
                             text = stringResource(Res.string.favorites),
-                            modifier = Modifier
-                                .padding(vertical = 12.dp)
+                            modifier = Modifier.padding(vertical = 12.dp)
                         )
                     }
                 }
@@ -204,6 +199,7 @@ private fun BookListScreen(
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         }
+
                                         state.searchResults.isEmpty() -> {
                                             Text(
                                                 text = stringResource(Res.string.no_search_results),
@@ -212,6 +208,7 @@ private fun BookListScreen(
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         }
+
                                         else -> {
                                             BookList(
                                                 books = state.searchResults,
@@ -227,7 +224,7 @@ private fun BookListScreen(
                             }
 
                             1 -> {
-                                if(state.favoriteBooks.isEmpty()) {
+                                if (state.favoriteBooks.isEmpty()) {
                                     Text(
                                         text = stringResource(Res.string.no_favorites_books),
                                         textAlign = TextAlign.Center,
@@ -258,7 +255,7 @@ private fun BookListScreen(
 
 @Preview
 @Composable
-private fun BookListScreenPreview(){
+private fun BookListScreenPreview() {
     BookListScreen(
         state = BookListState(
             searchResults = books
