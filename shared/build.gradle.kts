@@ -62,6 +62,7 @@ kotlin {
             implementation(libs.bundles.ktor)
 
             implementation(libs.sqlite.bundled)
+            implementation(libs.jetbrains.compose.navigation)
         }
 
         iosMain.dependencies {

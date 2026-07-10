@@ -1,6 +1,7 @@
 package com.marcomartiniano.kmpbookapp
 
 import androidx.compose.ui.window.ComposeUIViewController
+import com.marcomartiniano.kmpbookapp.app.App
 import com.marcomartiniano.kmpbookapp.di.initKoin
 
 fun MainViewController() = ComposeUIViewController(
