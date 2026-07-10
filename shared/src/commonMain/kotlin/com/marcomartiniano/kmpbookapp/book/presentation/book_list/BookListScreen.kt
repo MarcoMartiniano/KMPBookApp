@@ -252,6 +252,21 @@ private fun BookListScreen(
     }
 }
 
+private val books = (1..100).map {
+    Book(
+        id = it.toString(),
+        title = "Book $it",
+        imageUrl = "https://test.com",
+        authors = listOf("Marco Martiniano"),
+        description = "Description $it",
+        languages = emptyList(),
+        firstPublishYear = null,
+        averageRating = 4.6785,
+        ratingCount = 5,
+        numPages = 150,
+        numEditions = 4
+    )
+}
 
 @Preview
 @Composable
