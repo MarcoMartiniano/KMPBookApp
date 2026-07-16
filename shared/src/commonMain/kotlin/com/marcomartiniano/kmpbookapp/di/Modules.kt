@@ -4,6 +4,8 @@ import com.marcomartiniano.kmpbookapp.book.data.network.KtorRemoteBookDataSource
 import com.marcomartiniano.kmpbookapp.book.data.network.RemoteBookDataSource
 import com.marcomartiniano.kmpbookapp.book.data.repository.DefaultBookRepository
 import com.marcomartiniano.kmpbookapp.book.domain.BookRepository
+import com.marcomartiniano.kmpbookapp.book.presentation.SelectedBookViewModel
+import com.marcomartiniano.kmpbookapp.book.presentation.book_detail.BookDetailViewModel
 import com.marcomartiniano.kmpbookapp.book.presentation.book_list.BookListViewModel
 import com.marcomartiniano.kmpbookapp.core.data.HttpClientFactory
 import org.koin.core.module.Module
@@ -20,4 +22,6 @@ val sharedModule = module {
     singleOf(::DefaultBookRepository).bind<BookRepository>()
 
     viewModelOf(::BookListViewModel)
+    viewModelOf(::SelectedBookViewModel)
+    viewModelOf(::BookDetailViewModel)
 }
