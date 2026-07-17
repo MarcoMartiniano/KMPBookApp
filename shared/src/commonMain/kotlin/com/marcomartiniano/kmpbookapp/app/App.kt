@@ -1,5 +1,7 @@
 package com.marcomartiniano.kmpbookapp.app
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,8 +33,11 @@ fun App() {
         ) {
             navigation<Route.BookGraph>(
                 startDestination = Route.BookList
-            ){
-                composable<Route.BookList> {
+            ) {
+                composable<Route.BookList>(
+                    exitTransition = { slideOutHorizontally() },
+                    popEnterTransition = { slideInHorizontally() }
+                ) {
                     val viewModel = koinViewModel<BookListViewModel>()
                     val selectedBookViewModel =
                         it.sharedKoinViewModel<SelectedBookViewModel>(navController)
@@ -51,15 +56,26 @@ fun App() {
                         }
                     )
                 }
-
-                composable<Route.BookDetail> {
-                    val selectedBookViewModel = it.sharedKoinViewModel<SelectedBookViewModel>(navController)
+                composable<Route.BookDetail>(
+                    enterTransition = {
+                        slideInHorizontally { initialOffset ->
+                            initialOffset
+                        }
+                    },
+                    exitTransition = {
+                        slideOutHorizontally { initialOffset ->
+                            initialOffset
+                        }
+                    }
+                ) { it ->
+                    val selectedBookViewModel =
+                        it.sharedKoinViewModel<SelectedBookViewModel>(navController)
                     val viewModel = koinViewModel<BookDetailViewModel>()
                     val selectedBook by selectedBookViewModel.selectedBook.collectAsStateWithLifecycle()
 
                     LaunchedEffect(selectedBook) {
-                        selectedBook?.let { book ->
-                            viewModel.onAction(BookDetailAction.OnSelectedBookChange(book))
+                        selectedBook?.let {
+                            viewModel.onAction(BookDetailAction.OnSelectedBookChange(it))
                         }
                     }
 
@@ -77,7 +93,7 @@ fun App() {
 }
 
 @Composable
-private inline fun <reified T: ViewModel> NavBackStackEntry.sharedKoinViewModel(
+private inline fun <reified T : ViewModel> NavBackStackEntry.sharedKoinViewModel(
     navController: NavController
 ): T {
     val navGraphRoute = destination.parent?.route ?: return koinViewModel<T>()

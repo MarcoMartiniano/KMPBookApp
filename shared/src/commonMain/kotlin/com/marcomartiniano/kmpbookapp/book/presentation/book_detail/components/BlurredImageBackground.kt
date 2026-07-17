@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.marcomartiniano.kmpbookapp.core.presentation.DarkBlue
 import com.marcomartiniano.kmpbookapp.core.presentation.DesertWhite
+import com.marcomartiniano.kmpbookapp.core.presentation.PulseAnimation
 import com.marcomartiniano.kmpbookapp.core.presentation.SandYellow
 import kmpbookapp.shared.generated.resources.Res
 import kmpbookapp.shared.generated.resources.book_cover
@@ -64,7 +66,7 @@ fun BlurredImageBackground(
         model = imageUrl,
         onSuccess = {
             val size = it.painter.intrinsicSize
-            imageLoadResult = if(size.width > 1 && size.height > 1) {
+            imageLoadResult = if (size.width > 1 && size.height > 1) {
                 Result.success(it.painter)
             } else {
                 Result.failure(Exception("Invalid image dimensions"))
@@ -135,27 +137,28 @@ fun BlurredImageBackground(
                 AnimatedContent(
                     targetState = imageLoadResult
                 ) { result ->
-                    when(result) {
+                    when (result) {
                         null -> Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-//                            PulseAnimation(
-//                                modifier = Modifier
-//                                    .size(60.dp)
-//                            )
+                            PulseAnimation(
+                                modifier = Modifier
+                                    .size(60.dp)
+                            )
                         }
+
                         else -> {
                             Box {
                                 Image(
-                                    painter = if(result.isSuccess) painter else {
+                                    painter = if (result.isSuccess) painter else {
                                         painterResource(Res.drawable.book_error_2)
                                     },
                                     contentDescription = stringResource(Res.string.book_cover),
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .background(Color.Transparent),
-                                    contentScale = if(result.isSuccess) {
+                                    contentScale = if (result.isSuccess) {
                                         ContentScale.Crop
                                     } else {
                                         ContentScale.Fit
@@ -175,13 +178,13 @@ fun BlurredImageBackground(
                                         )
                                 ) {
                                     Icon(
-                                        imageVector = if(isFavorite) {
+                                        imageVector = if (isFavorite) {
                                             Icons.Filled.Favorite
                                         } else {
                                             Icons.Outlined.FavoriteBorder
                                         },
                                         tint = Color.Red,
-                                        contentDescription = if(isFavorite) {
+                                        contentDescription = if (isFavorite) {
                                             stringResource(Res.string.remove_from_favorites)
                                         } else {
                                             stringResource(Res.string.mark_as_favorite)

@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -20,7 +22,7 @@ kotlin {
     }
     
     jvm()
-    
+
     android {
        namespace = "com.marcomartiniano.kmpbookapp.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -36,6 +38,7 @@ kotlin {
            isIncludeAndroidResources = true
        }
     }
+
     
     sourceSets {
         androidMain.dependencies {
@@ -58,11 +61,14 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             api(libs.koin.core)
 
+            implementation(libs.androidx.room.runtime)
+
             implementation(libs.bundles.coil)
             implementation(libs.bundles.ktor)
 
             implementation(libs.sqlite.bundled)
             implementation(libs.jetbrains.compose.navigation)
+
         }
 
         iosMain.dependencies {
@@ -76,9 +82,19 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
+
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
 }

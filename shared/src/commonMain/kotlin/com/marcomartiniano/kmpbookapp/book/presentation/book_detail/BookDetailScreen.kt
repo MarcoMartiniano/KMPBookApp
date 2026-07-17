@@ -49,7 +49,7 @@ fun BookDetailScreenRoot(
     BookDetailScreen(
         state = state,
         onAction = { action ->
-            when(action) {
+            when (action) {
                 is BookDetailAction.OnBackClick -> onBackClick()
                 else -> Unit
             }
@@ -74,7 +74,7 @@ private fun BookDetailScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) {
-        if(state.book != null) {
+        if (state.book != null) {
             Column(
                 modifier = Modifier
                     .widthIn(max = 700.dp)
@@ -127,7 +127,7 @@ private fun BookDetailScreen(
                         }
                     }
                 }
-                if(state.book.languages.isNotEmpty()) {
+                if (state.book.languages.isNotEmpty()) {
                     TitledContent(
                         title = stringResource(Res.string.languages),
                         modifier = Modifier
@@ -162,25 +162,18 @@ private fun BookDetailScreen(
                             bottom = 8.dp
                         )
                 )
-                if(state.isLoading) {
+                if (state.isLoading) {
                     CircularProgressIndicator()
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .weight(1f),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                    }
                 } else {
                     Text(
-                        text = if(state.book.description.isNullOrBlank()) {
+                        text = if (state.book.description.isNullOrBlank()) {
                             stringResource(Res.string.description_unavailable)
                         } else {
                             state.book.description
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Justify,
-                        color = if(state.book.description.isNullOrBlank()) {
+                        color = if (state.book.description.isNullOrBlank()) {
                             Color.Black.copy(alpha = 0.4f)
                         } else Color.Black,
                         modifier = Modifier

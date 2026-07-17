@@ -9,6 +9,8 @@ import com.marcomartiniano.kmpbookapp.book.domain.BookRepository
 import com.marcomartiniano.kmpbookapp.core.domain.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -17,7 +19,7 @@ import kotlinx.coroutines.launch
 class BookDetailViewModel(
     private val bookRepository: BookRepository,
     savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
 
     private val bookId = savedStateHandle.toRoute<Route.BookDetail>().id
 
@@ -25,7 +27,7 @@ class BookDetailViewModel(
     val state = _state
         .onStart {
             fetchBookDescription()
-           // observeFavoriteStatus()
+            observeFavoriteStatus()
         }
         .stateIn(
             viewModelScope,
@@ -34,63 +36,58 @@ class BookDetailViewModel(
         )
 
     fun onAction(action: BookDetailAction) {
-        when(action) {
+        when (action) {
             is BookDetailAction.OnSelectedBookChange -> {
-                _state.update { it.copy(
-                    book = action.book
-                ) }
+                _state.update {
+                    it.copy(
+                        book = action.book
+                    )
+                }
             }
+
             is BookDetailAction.OnFavoriteClick -> {
                 viewModelScope.launch {
-                    if(state.value.isFavorite) {
-                       // bookRepository.deleteFromFavorites(bookId)
+                    if (state.value.isFavorite) {
+                        bookRepository.deleteFromFavorites(bookId)
                     } else {
                         state.value.book?.let { book ->
-//                            bookRepository.markAsFavorite(book)
+                            bookRepository.markAsFavorite(book)
                         }
                     }
                 }
             }
+
             else -> Unit
         }
     }
 
-//    private fun observeFavoriteStatus() {
-//        bookRepository
-//            .isBookFavorite(bookId)
-//            .onEach { isFavorite ->
-//                _state.update { it.copy(
-//                    isFavorite = isFavorite
-//                ) }
-//            }
-//            .launchIn(viewModelScope)
-//    }
+    private fun observeFavoriteStatus() {
+        bookRepository
+            .isBookFavorite(bookId)
+            .onEach { isFavorite ->
+                _state.update {
+                    it.copy(
+                        isFavorite = isFavorite
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
 
     private fun fetchBookDescription() {
         viewModelScope.launch {
-
             bookRepository
-                .getBookDescription(bookId = bookId)
+                .getBookDescription(bookId)
                 .onSuccess { description ->
-                    _state.update { it.copy(
-                        book = it.book?.copy(
-                            description = description
-                        ),
-                        isLoading = false
-                    )}
+                    _state.update {
+                        it.copy(
+                            book = it.book?.copy(
+                                description = description
+                            ),
+                            isLoading = false
+                        )
+                    }
                 }
         }
-//        viewModelScope.launch {
-//            bookRepository
-//                .getBookDescription(bookId)
-//                .onSuccess { description ->
-//                    _state.update { it.copy(
-//                        book = it.book?.copy(
-//                            description = description
-//                        ),
-//                        isLoading = false
-//                    ) }
-//                }
-//        }
     }
 }

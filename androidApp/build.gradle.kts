@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -11,6 +12,11 @@ kotlin {
         jvmTarget = JvmTarget.JVM_11
     }
 }
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 dependencies {
     implementation(projects.shared)
 

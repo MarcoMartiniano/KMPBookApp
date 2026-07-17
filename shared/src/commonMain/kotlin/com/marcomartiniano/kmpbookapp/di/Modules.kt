@@ -1,5 +1,8 @@
 package com.marcomartiniano.kmpbookapp.di
 
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.marcomartiniano.kmpbookapp.book.data.database.DatabaseFactory
+import com.marcomartiniano.kmpbookapp.book.data.database.FavoriteBookDatabase
 import com.marcomartiniano.kmpbookapp.book.data.network.KtorRemoteBookDataSource
 import com.marcomartiniano.kmpbookapp.book.data.network.RemoteBookDataSource
 import com.marcomartiniano.kmpbookapp.book.data.repository.DefaultBookRepository
@@ -20,6 +23,15 @@ val sharedModule = module {
     single { HttpClientFactory.create(get()) }
     singleOf(::KtorRemoteBookDataSource).bind<RemoteBookDataSource>()
     singleOf(::DefaultBookRepository).bind<BookRepository>()
+
+    single<FavoriteBookDatabase> {
+        get<DatabaseFactory>()
+            .create()
+            .setDriver(BundledSQLiteDriver())
+            .build()
+    }
+
+    single { get<FavoriteBookDatabase>().favoriteBookDao }
 
     viewModelOf(::BookListViewModel)
     viewModelOf(::SelectedBookViewModel)
